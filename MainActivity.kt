@@ -6,7 +6,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
-    var nStr: String = ""
+    private var nStr: String = ""
     private val nList = ArrayList<Double>()  // 数式に含まれる数を保持する配列
     private val oList = ArrayList<Char>()    // 数式に含まれるオペレーション(四則演算)を保持する配列
 
@@ -80,8 +80,9 @@ class MainActivity : AppCompatActivity() {
             nStr = ""                               //nStrを空に戻す
         }
 
+        var trig = 0
         equal.setOnClickListener {
-            if (nList.size != (oList.size + 1)) return@setOnClickListener
+//            if (nList.size != (oList.size + 1)) return@setOnClickListener
 
             formula.text = "${formula.text}="
             addList(nStr, '=')
@@ -90,9 +91,15 @@ class MainActivity : AppCompatActivity() {
             nStr = result
             nList.clear()
             oList.clear()
+            trig = 0
         }
 
-        memo.setOnClickListener {}
+        memo.setOnClickListener {
+            if (trig != 1){
+                memory.text = "${formula.text}"
+                trig = 1
+           }
+        }
         sign.setOnClickListener {}
 
         clear.setOnClickListener {
@@ -100,6 +107,8 @@ class MainActivity : AppCompatActivity() {
             nStr = ""
             nList.clear()
             oList.clear()
+            memory.text = ""
+            trig = 0
         }
 
         delete.setOnClickListener {
@@ -147,15 +156,11 @@ class MainActivity : AppCompatActivity() {
 
             else if(oList.elementAt(i) == '-'){
                 oList[i] = '+'
-                nList[i+1] = nList.elementAt(i+1) * -1
+                nList[i+1] = nList.elementAt(i+1) * (-1)
             }
             i++
         }
 
-        var result = 0.0
-        for (i in nList){
-            result += i
-        }
-        return result
+        return nList.sum()
     }
 }
